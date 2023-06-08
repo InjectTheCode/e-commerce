@@ -14,6 +14,7 @@ const UserSchema = mongoose.Schema({
     required: [true, "Please enter an email."],
     unique: true,
     validate: [validator.isEmail, "Please enter a valid email!"],
+    lowercase: true,
   },
   password: {
     type: String,
@@ -26,10 +27,18 @@ const UserSchema = mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+
+  passwordChangedAt: Date,
 });
 
 UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
+});
+
+UserSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
 });
 
 UserSchema.methods.comparePassword = async function (inputedPass) {
