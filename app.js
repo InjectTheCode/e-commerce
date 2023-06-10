@@ -15,6 +15,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 const authRoute = require("./routes/auth.route");
 const userRoute = require("./routes/user.route");
 const productRoute = require("./routes/product.route");
+const reviewRoute = require("./routes/review.route");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(fileUpload());
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/review", reviewRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
