@@ -34,7 +34,10 @@ const createReview = catchAsync(async (req, res, next) => {
 });
 
 const getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find({});
+  const reviews = await Review.find({}).populate({
+    path: "product",
+    select: "name company price",
+  });
   res.status(StatusCodes.OK).json({
     status: "success",
     count: reviews.length,
@@ -44,7 +47,10 @@ const getAllReviews = catchAsync(async (req, res, next) => {
 
 const getSingleReview = catchAsync(async (req, res, next) => {
   const { id: reviewId } = req.params;
-  const review = await Review.findOne({ _id: reviewId });
+  const review = await Review.findOne({ _id: reviewId }).populate({
+    path: "user",
+    select: "name",
+  });
   if (!review) {
     throw new CustomError.NotFoundError(`No review with id: ${reviewId}`);
   }
@@ -77,10 +83,27 @@ const deleteReview = catchAsync(async (req, res, next) => {
   res.status(StatusCodes.OK).json({ status: "success" });
 });
 
+const getSingleProductReviews = catchAsync(async (req, res, next) => {
+  const { id: productId } = req.params;
+  const review = await Review.find({ product: productId }).populate({
+    path: "user",
+    select: "name",
+  });
+  if (review.length < 1) {
+    throw new CustomError.NotFoundError(`No product with id: ${productId}`);
+  }
+  res.status(StatusCodes.OK).json({
+    status: "success",
+    count: review.length,
+    data: review,
+  });
+});
+
 module.exports = {
   createReview,
   getAllReviews,
   getSingleReview,
   updateReview,
   deleteReview,
+  getSingleProductReviews,
 };
