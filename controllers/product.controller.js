@@ -99,7 +99,7 @@ const deleteProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-// UPLOAD:
+// UPLOAD PRODUCT IMAGE:
 const uploadImage = catchAsync(async (req, res, next) => {
   const productImage = req.files.image;
   const maxSize = 1024 * 1024 * 5;
